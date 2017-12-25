@@ -1,3 +1,4 @@
+<%@page import="java.util.UUID"%>
 <%@page import="org.json.JSONArray"%>
 <%@page import="org.json.JSONObject"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
@@ -22,7 +23,7 @@ JSONObject obj = null;
 if(request.getAttribute("schema_details")!=null)
 {
 	obj = new JSONObject(request.getAttribute("schema_details").toString());	
-	System.out.println(obj.toString());
+	
 }
 
 String error = null;
@@ -32,7 +33,7 @@ if(request.getAttribute("error")!=null)
 }
 %>
 <body>
-<form action="/indexer/initialize_db" method ="POST">
+<form action="/indexer/create_index_script" method ="POST">
 <%
 if(error!=null)
 {
@@ -52,14 +53,28 @@ if(array.length()>0)
 	for(int i=0;i<array.length();i++)
 	{
 		JSONObject o = array.getJSONObject(i);
+		String checked = "";
+		String name = UUID.randomUUID().toString().replaceAll("-", "").replaceAll("[\\d]", "" )+System.currentTimeMillis(); 
+		name = "CREATE INDEX IF NOT EXISTS "+name+"   ON "+o.get("tableName")+" ("+o.get("columnName")+");";
+		if(o.get("indexName").toString().length()>0)
+		{
+			checked = "checked";		
+		}	
 		%>		
-		<tr><td><%=o.get("tableName")%></td><td><%=o.get("columnName") %></td><td><%=o.get("dataType") %></td><td><%=o.get("indexName") %></td><td><input type="checkbox"></td></tr>
+		<tr>
+		<td><%=o.get("tableName")%></td>
+		<td><%=o.get("columnName") %></td>
+		<td><%=o.get("dataType") %></td>
+		<td><%=o.get("indexName") %></td>
+		<td><input type="checkbox" name="<%=name%>" <%=checked%>></td>
+		</tr>
 		<%
 	}
 }	
 }	
 %>
 </table>
+<input type="submit" value="Create Script"/>
 <br/>  
 <br/>  
 <br/>  

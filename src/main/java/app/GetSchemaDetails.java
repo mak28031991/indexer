@@ -74,7 +74,7 @@ public class GetSchemaDetails extends HttpServlet {
 					array.put(o);
 				}
 				obj.put("data", array);
-				System.out.println(obj.toString());
+			//	System.out.println(obj.toString());
 			} catch (SQLException e) {
 				error = e.getMessage().toString();				
 			}	
